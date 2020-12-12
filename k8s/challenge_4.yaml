@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: frontend-secret
+type: Opaque
+data:
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: frontend
+data:
+  app.properties:
+    - VAR_ONE=1
+    - VAR_TWO=2
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {}
+  labels: {}
+spec:
+  replicas: 3
+  selector:
+    matchLabels: {}
+  template:
+    metadata:
+      annotations: {}
+      labels: {}
+    spec:
+      containers:
+        - name: app
+          image: hello-world
+          resources: {}
+          envFrom:
+          volumeMounts:
+            - name: config
+              mountPath:
+              subPath:
+      volumes:
+        - name: app-config
+          configMap:
+      nodeSelector: {}
+      affinity: {}
+      tolerations: {}

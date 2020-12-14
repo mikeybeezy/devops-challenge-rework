@@ -2,9 +2,10 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: frontend-secret
+  namespace: frontend
 type: Opaque
 data:
-
+  API_KEY: RkpOMmZqMjlmaDIkQA==
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -12,37 +13,43 @@ metadata:
   name: frontend-config
   namespace: frontend
 data:
-  app.properties:
+  app.properties: |
     - VAR_ONE=1
     - VAR_TWO=2
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {}
-  labels: {}
+  name: hello-world-ap
+  namespace: frontend
+  labels:
+    app: hello-world
 spec:
   replicas: 3
   selector:
-    matchLabels: {}
+    matchLabels:
+      app: hello-world
   template:
     metadata:
-      annotations: {}
-      labels: {}
+      labels:
+        app: hello-world
     spec:
       containers:
         - name: app
           image: hello-world
-          resources: {}
+          resources:
+            requests:
+              memory: "1000MiB"
+              cpu: "0.5"
           envFrom:
+            - secretRef:
+                name: frontend-secret
           volumeMounts:
-            - name: config
-              mountPath:
-              subPath:
+            - name: app-config
+              mountPath: /etc/test_app/app.properties
       volumes:
         - name: app-config
           configMap:
-      nodeSelector: {}
-      affinity: {}
-      tolerations: {}
+            name: frontend-config
+      nodeSelector:
+        role: microservices

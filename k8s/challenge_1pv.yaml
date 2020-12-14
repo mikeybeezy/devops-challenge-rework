@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-app-pv-1-c
+  labels:
+    type: local
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/mbabatunde/k8s-pv/vol-0
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-app-pv-1-d
+  labels:
+    type: local
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/mbabatunde/k8s-pv/vol-1
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-app-pv-1-e
+  labels:
+    type: local
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/mbabatunde/k8s-pv/vol-2

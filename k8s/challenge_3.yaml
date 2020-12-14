@@ -49,6 +49,6 @@ spec:
         app: challenge-3
     spec:
       containers:
-      - image: challenge-3-image
+      - image: challenge-3-image-placeholder
         name: challenge-3
         resources: {}

@@ -1,19 +1,54 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: challenge-3
   namespace: frontend
+  labels:
+    app: challenge-3
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-west-1:12345678910:certificate/5x74ftt7-575y-1256-8280-7dcd7761267z
 spec:
-  type:
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
   ports:
     - name: rest-api
-      port:
-      targetPort:
+      protocol: TCP
+      port: 7070
+      targetPort: https
     - name: http
+      protocol: TCP
       port: 8080
-      targetPort:
+      targetPort: http
     - name: https
+      protocol: TCP
       port: 443
-      targetPort: 443
-  selector: {}
+      targetPort: https
+  selector:
+    app: challenge-3
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: challenge-3
+  namespace: frontend
+  labels:
+    app: challenge-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: challenge-3
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: challenge-3
+    spec:
+      containers:
+      - image: challenge-3-image
+        name: challenge-3
+        resources: {}

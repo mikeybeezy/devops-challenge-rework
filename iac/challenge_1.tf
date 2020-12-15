@@ -13,7 +13,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   subnet_count = length(data.aws_availability_zones.available.names)
-  region       = "eu-west-1"
+  region       = var.region
   private_subnet_count = length(data.aws_availability_zones.available.names)
   public_subnet_count = length(data.aws_availability_zones.available.names)
 }
@@ -111,8 +111,6 @@ resource "aws_nat_gateway" "gateway" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = element(aws_subnet.public.*.id, count.index)
 }
-
-
 
 resource "aws_security_group" "custom_sg" {
   name        = "custom security group"

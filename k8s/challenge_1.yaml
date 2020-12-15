@@ -1,14 +1,68 @@
+#headless service fp
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx
+  name: nginx-headless
   namespace: backend
+  labels:
+    app: postgres
 spec:
   ports:
-  - port: 
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
     name: postgres
   clusterIP: None
   selector:
     app: postgres
+---
+#Service for load balancing  and all traffic tyoes
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-lb-svc
+  namespace: backend
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgres
+  type: ClusterIP
+  selector:
+    app: postgres
 
 ---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db-sts
+  namespace: backend
+spec:
+  serviceName: "nginx-headless"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: gp2-vol-claim
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: gp2-vol-claim
+    spec:
+      storageClassName: gp2
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100GiB

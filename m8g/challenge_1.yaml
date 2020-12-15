@@ -11,20 +11,27 @@ prometheus:
   annotations: {}
   additionalServiceMonitors:
     - name: frontend-sm
+      labels:
+        prometheus-app: frontend-svc
       namespaceSelector:
         matchNames:
-          - 
+          - monitoring
       selector:
         matchLabels:
-          prometheus-app: 
+          prometheus-app: frontend-svc
       endpoints:
-        - port: 
+        - port: frontend-svc-port
           protocol: TCP
           interval: 10s
   service:
+    name: frontend-svc
+    namespace: monitoring
     annotations: {}
-    labels: {}
+    labels:
+      prometheus-app: frontend-svc
     type: LoadBalancer
+    portName: frontend-svc-port
+    port: 8080
     loadBalancerSourceRanges: []
   prometheusSpec:
     walCompression: true
@@ -35,7 +42,7 @@ prometheus:
         service-monitor-discovery: enable
 grafana:
   enabled: true
-  defaultDashboardsEnabled: false
+  defaultDashboardsEnabled: true
   plugins:
     - pierosavi-imageit-panel
     - agenty-flowcharting-panel
